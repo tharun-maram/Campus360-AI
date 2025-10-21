@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2 class="fw-bold text-dark mb-4">Welcome, Professor {{ username }}! 📊</h2>
+<p class="lead text-muted">Monitor student progress, identify intervention needs, and view overall class performance.</p>
+<hr class="mb-4">
+
+<h3 class="fw-bold text-primary mb-3">Student Performance Analytics</h3>
+
+<div class="alert alert-info border-0 p-3 mb-4" style="background-color: #e0f7fa; color: #00bcd4;">
+    <p class="mb-0 fw-bold">Intervention Legend:</p>
+    <p class="mb-0 small"><span class="badge bg-danger">Red Highlight</span> indicates a student flagged for **Intervention** (Low Score OR Inactive).</p>
+</div>
+
+<div class="card shadow-lg p-3">
+    <div class="table-responsive">
+        <table class="table table-borderless table-hover align-middle mb-0">
+            <thead class="text-muted small text-uppercase" style="border-bottom: 2px solid #e9ecef;">
+                <tr>
+                    <th scope="col" class="pb-3">Student Email</th>
+                    <th scope="col" class="pb-3">Avg. Interview Score</th>
+                    <th scope="col" class="pb-3">Recent Activity (Last 7 Days)</th>
+                    <th scope="col" class="pb-3">Intervention Status</th>
+                    <th scope="col" class="pb-3">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for student in student_data %}
+                <tr class="{{ 'table-danger' if student.intervention_needed else '' }}" style="--bs-table-accent-bg: rgba(220, 53, 69, 0.1);">
+                    <td class="fw-bold">{{ student.username }}@gmail.com</td>
+                    <td>
+                        <span class="badge rounded-pill p-2 bg-{{ 'danger' if student.last_score < 60 and student.last_score > 0 else ('warning' if student.last_score < 80 and student.last_score > 0 else 'success') }}">
+                            {% if student.last_score == 0 %}
+                                N/A
+                            {% else %}
+                                {{ student.last_score }}%
+                            {% endif %}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="fw-bold text-dark">{{ student.total_activity }}</span> activities
+                    </td>
+                    <td>
+                        {% if student.intervention_needed %}
+                        <span class="badge bg-danger p-2">FLAGGED - URGENT</span>
+                        {% else %}
+                        <span class="badge bg-secondary p-2">Monitoring</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-{{ 'danger' if student.intervention_needed else 'outline-primary' }} fw-bold">
+                            Review & Guide
+                        </button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

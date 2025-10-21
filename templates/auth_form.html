@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center mt-5 pt-5">
+    <div class="col-md-5">
+        <div class="card shadow-xl border-0">
+            <div class="card-header text-white text-center py-4" style="background-color: var(--dark-bg); border-top-left-radius: 12px; border-top-right-radius: 12px;">
+                <h4 class="mb-0 fw-bold">Login to Campus 360 AI</h4>
+            </div>
+            <div class="card-body p-4">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        <div class="alert alert-danger" role="alert">
+                            {% for category, message in messages %}
+                                {{ message }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endwith %}
+
+                <form id="login-form" method="POST" action="{{ url_for('login') }}" novalidate>
+                    <div class="mb-3">
+                        <label for="username" class="form-label fw-bold">Username (Must be @gmail.com)</label>
+                        <input type="email" class="form-control" id="username" name="username" required>
+                        <div id="email-feedback" class="invalid-feedback"></div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="password" class="form-label fw-bold">Password</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                        <div id="password-checklist" class="mt-2 small">
+                            <ul class="list-unstyled">
+                                <li id="check-length" class="text-danger">Min 8 characters</li>
+                                <li id="check-capital" class="text-danger">1 Capital letter (A-Z)</li>
+                                <li id="check-small" class="text-danger">1 Small letter (a-z)</li>
+                                <li id="check-number" class="text-danger">1 Number (0-9)</li>
+                                <li id="check-special" class="text-danger">1 Special character</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" id="login-button" class="btn btn-primary fs-5 w-100 mt-4 py-2" disabled>
+                        Log In
+                    </button>
+
+                    <p class="mt-3 text-center small text-muted">Don't have an account? <a href="{{ url_for('signup') }}" style="color: var(--primary-color); font-weight: 600;">Sign Up here</a></p>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const passwordInput = document.getElementById('password');
+    const loginButton = document.getElementById('login-button');
+    
+    const checks = {
+        length: document.getElementById('check-length'),
+        capital: document.getElementById('check-capital'),
+        small: document.getElementById('check-small'),
+        number: document.getElementById('check-number'),
+        special: document.getElementById('check-special')
+    };
+
+    function validatePasswordDynamically() {
+        const password = passwordInput.value;
+        let allValid = true;
+
+        const validationRules = [
+            { id: 'length', regex: /.{8,}/ },
+            { id: 'capital', regex: /[A-Z]/ },
+            { id: 'small', regex: /[a-z]/ },
+            { id: 'number', regex: /[0-9]/ },
+            { id: 'special', regex: /[^A-Za-z0-9]/ }
+        ];
+
+        validationRules.forEach(rule => {
+            const isValid = rule.regex.test(password);
+            const checkElement = checks[rule.id];
+            
+            checkElement.classList.toggle('text-success', isValid);
+            checkElement.classList.toggle('text-danger', !isValid);
+
+            if (!isValid) {
+                allValid = false;
+            }
+        });
+
+        loginButton.disabled = !allValid;
+    }
+
+    passwordInput.addEventListener('keyup', validatePasswordDynamically);
+    
+    document.getElementById('login-form').addEventListener('submit', function(event) {
+        const email = document.getElementById('username').value;
+        const emailFeedback = document.getElementById('email-feedback');
+        
+        // Email Validation (Frontend check only)
+        if (!email.toLowerCase().endsWith('@gmail.com')) {
+            emailFeedback.textContent = 'Email must be a @gmail.com address.';
+            document.getElementById('username').classList.add('is-invalid');
+            event.preventDefault();
+            return;
+        } else {
+            document.getElementById('username').classList.remove('is-invalid');
+        }
+
+        validatePasswordDynamically();
+        if (loginButton.disabled) {
+            event.preventDefault();
+        }
+    });
+
+    validatePasswordDynamically();
+</script>
+{% endblock %}

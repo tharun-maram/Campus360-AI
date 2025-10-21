@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center text-center py-5" style="background: linear-gradient(180deg, #f7f9fc 0%, #e8eaf6 100%); margin: -2rem -1rem 0 -1rem;">
+    <div class="col-md-10">
+        <span class="badge bg-light text-primary mb-3 p-2 small fw-bold">Smart AI-Powered Learning Ecosystem</span>
+        <h1 class="display-3 fw-bold mb-3" style="color: #3f51b5;">
+            Welcome to <span style="color: var(--primary-color);">Campus 360</span>
+        </h1>
+        <p class="lead text-muted mb-4">
+            Your virtual academic assistant for personalized mentorship, AI-driven evaluation, and enhanced career readiness.
+        </p>
+
+        <a href="{{ url_for('login') }}" class="btn btn-primary btn-lg fw-bold me-3 py-2" style="background-color: var(--primary-color) !important;">
+            Get Started ✨
+        </a>
+        <a href="{{ url_for('signup') }}" class="btn btn-outline-primary btn-lg fw-bold me-3 py-2">
+            Sign Up Now
+        </a>    
+        <a href="{{ url_for('login') }}" class="btn btn-outline-dark btn-lg fw-bold py-2">
+            Faculty Login
+        </a>
+    </div>
+</div>
+
+<div class="row text-center mt-5 pt-5">
+    <div class="col-12">
+        <h2 class="fw-bold" style="color: #3f51b5;">Expected Outcomes</h2>
+        <p class="lead text-muted mb-5">Transform your learning experience with measurable results</p>
+    </div>
+    
+    <div class="col-md-4 mb-4">
+        <div class="card p-4 h-100 border-0 shadow-sm">
+            <span class="text-center display-4 mb-3" style="color: #3f51b5;">🎯</span>
+            <h5 class="fw-bold text-dark">Personalized Learning</h5>
+            <p class="small text-muted">AI-driven insights tailored to each student's unique learning style and pace.</p>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card p-4 h-100 border-0 shadow-sm">
+            <span class="text-center display-4 mb-3" style="color: #3f51b5;">📈</span>
+            <h5 class="fw-bold text-dark">Continuous Improvement</h5>
+            <p class="small text-muted">Real-time feedback and analytics to track progress and drive better outcomes.</p>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card p-4 h-100 border-0 shadow-sm">
+            <span class="text-center display-4 mb-3" style="color: #3f51b5;">🏅</span>
+            <h5 class="fw-bold text-dark">Career Readiness</h5>
+            <p class="small text-muted">Prepare for real-world challenges with interview simulations and coding practice.</p>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-5 pt-5">
+    <div class="col-12 text-center">
+        <h2 class="fw-bold mb-5" style="color: var(--primary-color);">Powerful Features for Modern Learning</h2>
+    </div>
+
+    <div class="col-md-4 mb-4">
+        <div class="card p-4 h-100 text-center border-0 shadow-sm">
+            <h5 class="fw-bold text-dark"><span class="display-6 me-2" style="color: #3f51b5;">{ }</span> AI Mentor Dashboard</h5>
+            <p class="small text-muted">Track performance, identify strengths and weaknesses, and receive personalized improvement suggestions powered by advanced AI.</p>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card p-4 h-100 text-center border-0 shadow-sm">
+            <h5 class="fw-bold text-dark"><span class="display-6 me-2" style="color: #3f51b5;">🎙️</span> Smart AI Interviewer</h5>
+            <p class="small text-muted">Practice technical and communication skills with virtual interviews that analyze speech and text, providing detailed feedback.</p>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card p-4 h-100 text-center border-0 shadow-sm">
+            <h5 class="fw-bold text-dark"><span class="display-6 me-2" style="color: #3f51b5;">&lt;/&gt;</span> Integrated Code Compilers</h5>
+            <p class="small text-muted">Code and practice in-browser with support for Java, C, C++, and Python. Execute code and see results instantly.</p>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card p-4 h-100 text-center border-0 shadow-sm">
+            <h5 class="fw-bold text-dark"><span class="display-6 me-2" style="color: #3f51b5;">📈</span> Faculty Analytics</h5>
+            <p class="small text-muted">Monitor student progress, view comprehensive analytics, assign assessments, and provide targeted feedback.</p>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card p-4 h-100 text-center border-0 shadow-sm">
+            <h5 class="fw-bold text-dark"><span class="display-6 me-2" style="color: #3f51b5;">🧑‍🎓</span> Student Dashboard</h5>
+            <p class="small text-muted">Access personalized learning suggestions, track your progress, and engage with coding exercises and interview simulations.</p>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card p-4 h-100 text-center border-0 shadow-sm">
+            <h5 class="fw-bold text-dark"><span class="display-6 me-2" style="color: #3f51b5;">✨</span> Interactive Learning</h5>
+            <p class="small text-muted">Engage with modern, intuitive interfaces designed for seamless navigation and enhanced learning experiences.</p>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

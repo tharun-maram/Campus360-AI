@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center text-center">
+    <div class="col-md-8">
+        <div class="card p-5 shadow-lg">
+            <h2 class="fw-bold text-dark mb-4">AI Interview Coach 🎙️</h2>
+            
+            <div class="mb-4">
+                <span class="text-success fw-bold me-2">AI Interview Coach</span>
+                <span class="text-muted small">Audio Enabled</span>
+            </div>
+
+            <div class="p-4 rounded mb-4" style="background-color: #f0f4f8; border: 1px solid #e0e6ed;">
+                <h4 class="fw-bold text-start" style="color: var(--primary-color);">
+                    {{ question.text }}
+                </h4>
+                <p class="text-muted small text-start">Focus: {{ question.type }} (Concept: {{ question.concept }})</p>
+            </div>
+            
+            <form method="POST" action="{{ url_for('process_interview') }}">
+                <input type="hidden" name="question_key" value="{{ question_key }}"> 
+                
+                <div class="mb-3 text-start">
+                    <label for="student_answer" class="form-label fs-5 fw-bold" style="color: var(--secondary-color);">Your Response (Speak or Type):</label>
+                    <div class="input-group">
+                        <textarea class="form-control" id="student_answer" name="student_answer" rows="5" required 
+                            placeholder="Click the microphone to speak your answer..."></textarea>
+                        <button type="button" class="btn btn-primary" id="start-recording-btn" style="width: 100px;">
+                            <svg xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)" width="24" height="24" fill="currentColor" class="bi bi-mic" viewBox="0 0 16 16">
+                                <path d="M3.5 6a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-1 0v-3a.5.5 0 0 1 .5-.5m7 0a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-1 0v-3a.5.5 0 0 1 .5-.5m-7.5 0a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-1 0v-3a.5.5 0 0 1 .5-.5m3.5 0a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-1 0v-3a.5.5 0 0 1 .5-.5z"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <small class="form-text text-muted" id="audio-status">Click the microphone button to begin speaking.</small>
+                </div>
+                
+                <button type="submit" class="btn btn-success fs-5 w-100 py-3 mt-4">Submit Answer & Get Instant AI Feedback</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Speech-to-Text Logic (Must be included here)
+    const startBtn = document.getElementById('start-recording-btn');
+    const textArea = document.getElementById('student_answer');
+    const statusText = document.getElementById('audio-status');
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (SpeechRecognition) {
+        const recognition = new SpeechRecognition();
+        recognition.continuous = false;
+        recognition.interimResults = true;
+        recognition.lang = 'en-US'; 
+
+        startBtn.addEventListener('click', () => {
+            if (startBtn.classList.contains('btn-danger')) {
+                recognition.stop();
+                return;
+            }
+            textArea.value = ''; 
+            recognition.start();
+        });
+
+        recognition.onstart = function() {
+            startBtn.classList.remove('btn-primary');
+            startBtn.classList.add('btn-danger');
+            statusText.textContent = 'Listening... Speak clearly into your microphone.';
+        };
+
+        recognition.onresult = function(event) {
+            let interim_transcript = '';
+            for (let i = event.resultIndex; i < event.results.length; ++i) {
+                if (event.results[i].isFinal) {
+                    textArea.value += event.results[i][0].transcript + ' ';
+                } else {
+                    interim_transcript += event.results[i][0].transcript;
+                }
+            }
+            statusText.textContent = 'Recording: ' + interim_transcript;
+        };
+
+        recognition.onend = function() {
+            startBtn.classList.remove('btn-danger');
+            startBtn.classList.add('btn-primary');
+            if (textArea.value.trim() === '') {
+                 statusText.textContent = 'Recording stopped. No speech detected.';
+            } else {
+                 statusText.textContent = 'Recording stopped. Analysis ready.';
+            }
+        };
+
+        recognition.onerror = function(event) {
+            statusText.textContent = 'Error during speech recognition: ' + event.error;
+            startBtn.classList.remove('btn-danger');
+            startBtn.classList.add('btn-primary');
+        };
+    } else {
+        startBtn.disabled = true;
+        statusText.textContent = 'Voice input not supported in this browser. Please type your response.';
+    }
+</script>
+{% endblock %}

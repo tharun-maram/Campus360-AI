@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2 class="text-primary mb-4">Welcome, {{ username }}! 👋</h2>
+
+<div class="row">
+    <div class="col-md-6 mb-4">
+        <div class="card shadow h-100 border-primary border-3">
+            <div class="card-body">
+                <h5 class="card-title text-primary">Start AI Interview 🎙️</h5>
+                <p class="card-text">Practice verbal skills and get personalized AI-driven feedback instantly.</p>
+                <hr>
+                <p class="fw-bold mb-2">Choose an Interview Focus:</p>
+                <a href="{{ url_for('start_interview', q_key='hr_q1') }}" class="btn btn-outline-primary w-100 mb-2">Behavioral/HR Interview</a>
+                <a href="{{ url_for('start_interview', q_key='tech_q1') }}" class="btn btn-outline-primary w-100 mb-2">Technical Interview (OOP)</a>
+                <a href="{{ url_for('start_interview', q_key='tech_q2') }}" class="btn btn-outline-primary w-100">Conflict Resolution (STAR)</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 mb-4">
+        <div class="card shadow h-100 border-success border-3">
+            <div class="card-body">
+                <h5 class="card-title text-success">Integrated Coding Practice 💻</h5>
+                <p class="card-text">Access multi-language compilers to practice, run, and analyze your code.</p>
+                <hr>
+                <a href="#" class="btn btn-success w-100 disabled">Go to Compilers (Phase 4)</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<h3 class="text-primary mt-4 mb-3">Your Recent Performance 📈</h3>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <div class="alert alert-{{ messages[0][0] }} alert-dismissible fade show" role="alert">
+            {{ messages[0][1] }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% endif %}
+{% endwith %}
+
+{% if interviews %}
+    <div class="row">
+        {% for interview in interviews %}
+        <div class="col-md-4 mb-4">
+            <div class="card shadow border-info">
+                <div class="card-header bg-info text-white">
+                    Interview Result
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">Score: <span class="badge bg-{{ 'success' if interview.score >= 70 else ('warning' if interview.score >= 50 else 'danger') }}">{{ interview.score }}%</span></h5>
+                    <p class="card-text mb-1"><small class="text-muted">Topic: {{ interview.question[:30] }}...</small></p>
+                    
+                    <ul class="list-group list-group-flush mt-2">
+                        <li class="list-group-item"><strong>Feedback:</strong> {{ interview.communication_feedback[:50] }}...</li>
+                        <li class="list-group-item bg-light">
+                            <strong>🎯 Improve:</strong> 
+                            <a href="{{ interview.remedial_resource.link }}" target="_blank" class="btn btn-sm btn-outline-primary mt-1 w-100" style="font-size: 0.8rem;">
+                                {{ interview.remedial_resource.title }}
+                                
+
+[Image of a book icon]
+
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card-footer text-muted small">
+                    Taken on: {{ interview.timestamp.strftime('%b %d, %I:%M %p') }}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="alert alert-info">You haven't completed any AI interviews yet. Start one above!</div>
+{% endif %}
+
+<h3 class="text-success mt-5 mb-3">Recent Coding Activity</h3>
+<div class="alert alert-secondary">No coding activity recorded yet. (Check back after Phase 4!)</div>
+
+{% endblock %}
