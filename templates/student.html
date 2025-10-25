@@ -1,84 +1,393 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2 class="text-primary mb-4">Welcome, {{ username }}! 👋</h2>
+{% set total_interviews = interviews | length %}
+{% set total_coding = coding_activity | length %}
+{% set has_activity = total_interviews > 0 or total_coding > 0 %}
 
-<div class="row">
-    <div class="col-md-6 mb-4">
-        <div class="card shadow h-100 border-primary border-3">
-            <div class="card-body">
-                <h5 class="card-title text-primary">Start AI Interview 🎙️</h5>
-                <p class="card-text">Practice verbal skills and get personalized AI-driven feedback instantly.</p>
-                <hr>
-                <p class="fw-bold mb-2">Choose an Interview Focus:</p>
-                <a href="{{ url_for('start_interview', q_key='hr_q1') }}" class="btn btn-outline-primary w-100 mb-2">Behavioral/HR Interview</a>
-                <a href="{{ url_for('start_interview', q_key='tech_q1') }}" class="btn btn-outline-primary w-100 mb-2">Technical Interview (OOP)</a>
-                <a href="{{ url_for('start_interview', q_key='tech_q2') }}" class="btn btn-outline-primary w-100">Conflict Resolution (STAR)</a>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold text-dark mb-0">Welcome back, {{ username | capitalize }}! 👋</h2>
+    <div class="d-flex align-items-center">
+        <span class="badge bg-secondary-soft text-dark me-2">Student</span>
+        <i class="bi bi-bell-fill text-muted" style="font-size: 1.5rem;"></i>
+    </div>
+</div>
+<p class="lead text-muted mb-5">Here's your learning progress and personalized recommendations.</p>
+
+<div class="row mb-5 g-4">
+    <div class="col-md-3">
+        <div class="card p-4 h-100">
+            <h5 class="text-secondary fw-bold">Overall Score</h5>
+            <div class="d-flex justify-content-between align-items-center my-2">
+                <span class="fs-1 fw-bolder" style="color: var(--primary-color);">
+                    {% if total_interviews > 0 %}
+                        88% 
+                    {% else %}
+                        —
+                    {% endif %}
+                </span>
+                <span class="badge bg-success-soft text-success p-2 rounded-circle d-flex align-items-center justify-content-center" style="font-size: 1.5rem; width: 50px; height: 50px;">
+                    <i class="bi bi-graph-up"></i>
+                </span>
+            </div>
+            <p class="small text-success">
+                {% if total_interviews > 0 %}+5% from last week{% else %}Start practicing!{% endif %}
+            </p>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="card p-4 h-100">
+            <h5 class="text-secondary fw-bold">Interviews Completed</h5>
+            <div class="d-flex justify-content-between align-items-center my-2">
+                <span class="fs-1 fw-bolder" style="color: var(--primary-color);">{{ total_interviews }}</span>
+                <span class="badge bg-warning-soft text-warning p-2 rounded-circle d-flex align-items-center justify-content-center" style="font-size: 1.5rem; width: 50px; height: 50px;">
+                    <i class="bi bi-mic"></i>
+                </span>
+            </div>
+            <p class="small text-warning">
+                {% if total_interviews > 0 %}+{{ total_interviews }} this week{% else %}+0 this week{% endif %}
+            </p>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="card p-4 h-100">
+            <h5 class="text-secondary fw-bold">Coding Challenges</h5>
+            <div class="d-flex justify-content-between align-items-center my-2">
+                <span class="fs-1 fw-bolder" style="color: var(--primary-color);">{{ total_coding }}</span>
+                <span class="badge bg-info-soft text-info p-2 rounded-circle d-flex align-items-center justify-content-center" style="font-size: 1.5rem; width: 50px; height: 50px;">
+                    <i class="bi bi-code-slash"></i>
+                </span>
+            </div>
+            <p class="small text-info">
+                {% if total_coding > 0 %}+{{ total_coding }} this week{% else %}+0 this week{% endif %}
+            </p>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="card p-4 h-100">
+            <h5 class="text-secondary fw-bold">Study Hours</h5>
+            <div class="d-flex justify-content-between align-items-center my-2">
+                <span class="fs-1 fw-bolder" style="color: var(--primary-color);">24h</span>
+                <span class="badge bg-dark-soft text-dark p-2 rounded-circle d-flex align-items-center justify-content-center" style="font-size: 1.5rem; width: 50px; height: 50px;">
+                    <i class="bi bi-clock"></i>
+                </span>
+            </div>
+            <p class="small text-secondary">2h today</p>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mb-5">
+    
+    <div class="col-md-8">
+        <div class="card p-4 h-100">
+            <h3 class="fw-bold text-dark mb-3">Performance Trend</h3>
+            <div style="position: relative; height: 300px; width: 100%;">
+                <canvas id="performanceTrendChart"></canvas>
             </div>
         </div>
     </div>
 
-    <div class="col-md-6 mb-4">
-        <div class="card shadow h-100 border-success border-3">
-            <div class="card-body">
-                <h5 class="card-title text-success">Integrated Coding Practice 💻</h5>
-                <p class="card-text">Access multi-language compilers to practice, run, and analyze your code.</p>
-                <hr>
-                <a href="#" class="btn btn-success w-100 disabled">Go to Compilers (Phase 4)</a>
+    
+    <div class="col-md-4">
+        <div class="card p-4 h-100">
+            <h3 class="fw-bold text-dark mb-3">Skill Distribution</h3>
+            <div style="position: relative; height: 300px; width: 100%;">
+                <canvas id="skillDistributionChart"></canvas>
+            </div>
+            <div class="d-flex justify-content-center mt-3 small">
+                <div class="me-3"><span class="badge rounded-circle p-2 me-1" style="background-color: #28a745;"></span> Current Level</div>
+                <div><span class="badge rounded-circle p-2 me-1" style="background-color: #a7d9b4;"></span> Target Level</div>
             </div>
         </div>
     </div>
 </div>
 
-<h3 class="text-primary mt-4 mb-3">Your Recent Performance 📈</h3>
-
-{% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-        <div class="alert alert-{{ messages[0][0] }} alert-dismissible fade show" role="alert">
-            {{ messages[0][1] }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    {% endif %}
-{% endwith %}
-
-{% if interviews %}
-    <div class="row">
-        {% for interview in interviews %}
-        <div class="col-md-4 mb-4">
-            <div class="card shadow border-info">
-                <div class="card-header bg-info text-white">
-                    Interview Result
+<div class="row g-4 mb-5">
+    <div class="col-md-8">
+        <h3 class="fw-bold text-dark mb-3">AI Mentor Recommendations</h3>
+        <div class="row g-3">
+            <div class="col-md-4 mb-4">
+                <div class="card p-3 h-100">
+                    <h5 class="fw-bold">Improve Technical Communication</h5>
+                    <span class="badge bg-danger text-white mb-2" style="width: fit-content;">high</span>
+                    <p class="small text-muted mb-3">Practice explaining complex concepts in simple terms.</p>
+                    <a href="{{ url_for('start_interview') }}" class="btn btn-primary mt-auto">Start Practice Session</a>
                 </div>
-                <div class="card-body">
-                    <h5 class="card-title">Score: <span class="badge bg-{{ 'success' if interview.score >= 70 else ('warning' if interview.score >= 50 else 'danger') }}">{{ interview.score }}%</span></h5>
-                    <p class="card-text mb-1"><small class="text-muted">Topic: {{ interview.question[:30] }}...</small></p>
-                    
-                    <ul class="list-group list-group-flush mt-2">
-                        <li class="list-group-item"><strong>Feedback:</strong> {{ interview.communication_feedback[:50] }}...</li>
-                        <li class="list-group-item bg-light">
-                            <strong>🎯 Improve:</strong> 
-                            <a href="{{ interview.remedial_resource.link }}" target="_blank" class="btn btn-sm btn-outline-primary mt-1 w-100" style="font-size: 0.8rem;">
-                                {{ interview.remedial_resource.title }}
-                                
-
-[Image of a book icon]
-
-                            </a>
-                        </li>
-                    </ul>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card p-3 h-100">
+                    <h5 class="fw-bold">System Design Fundamentals</h5>
+                    <span class="badge bg-warning text-dark mb-2" style="width: fit-content;">medium</span>
+                    <p class="small text-muted mb-3">Strengthen your understanding of scalable architectures.</p>
+                    <a href="#" class="btn btn-primary mt-auto">View Resources</a>
                 </div>
-                <div class="card-footer text-muted small">
-                    Taken on: {{ interview.timestamp.strftime('%b %d, %I:%M %p') }}
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card p-3 h-100">
+                    <h5 class="fw-bold">Mock Interview Practice</h5>
+                    <span class="badge bg-danger text-white mb-2" style="width: fit-content;">high</span>
+                    <p class="small text-muted mb-3">Schedule regular practice sessions to build confidence.</p>
+                    <a href="{{ url_for('start_interview') }}" class="btn btn-primary mt-auto">Schedule Now</a>
                 </div>
             </div>
         </div>
-        {% endfor %}
+        
+        <h3 class="fw-bold text-dark mt-4 mb-3">Recent Activity</h3>
+        <div class="list-group shadow-sm mb-4">
+            {% set activity_list = (interviews | list) + (coding_activity | list) %}
+            {% set sorted_activity = activity_list | sort(attribute='timestamp', reverse=true) %}
+
+            {% for item in sorted_activity[:6] %}
+                {% if item and item.question is defined and item.question %}
+                <li class="list-group-item d-flex justify-content-between align-items-center py-3">
+                    <div class="d-flex align-items-center">
+                        <span class="badge bg-warning-soft text-warning p-2 rounded-circle me-3" style="font-size: 1.2rem;">🎙️</span>
+                        <div class="text-start">
+                            <div class="fw-bold">Interview - {{ item.question[:25] }}...</div>
+                            <small class="text-muted">{{ item.timestamp.strftime('%H:%M %p') }}</small>
+                        </div>
+                    </div>
+                    <span class="fs-6 fw-bold" style="color: var(--primary-color);">{{ item.score }}%</span>
+                </li>
+                {% elif item and item.language is defined and item.language %}
+                <li class="list-group-item d-flex justify-content-between align-items-center py-3">
+                    <div class="d-flex align-items-center">
+                        <span class="badge bg-info-soft text-info p-2 rounded-circle me-3" style="font-size: 1.2rem;">💻</span>
+                        <div class="text-start">
+                            <div class="fw-bold">{{ item.language.upper() }} Challenge - {{ item.status }}</div>
+                            <small class="text-muted">{{ item.timestamp.strftime('%H:%M %p') }}</small>
+                        </div>
+                    </div>
+                    <span class="fs-6 fw-bold" style="color: var(--primary-color);">
+                        {% if item.status == "Success" %}92%{% else %}60%{% endif %}
+                    </span>
+                </li>
+                {% else %}
+                <li class="list-group-item d-flex justify-content-between align-items-center py-3 text-danger">
+                    <div class="fw-bold">Corrupted Activity Log Found.</div>
+                </li>
+                {% endif %}
+            {% endfor %} 
+            
+            {% if not has_activity %}
+                 <li class="list-group-item text-center text-muted py-3">No recent activity recorded. Start practicing!</li>
+            {% endif %}
+        </div>
     </div>
-{% else %}
-    <div class="alert alert-info">You haven't completed any AI interviews yet. Start one above!</div>
+
+    <div class="col-md-4">
+        <h3 class="fw-bold text-dark mb-3">Quick Actions</h3>
+        <div class="row g-3">
+            <div class="col-6">
+                <div class="card text-center p-4 h-100 shadow-sm border-0">
+                    <a href="{{ url_for('start_interview') }}" class="text-decoration-none d-block">
+                        <span class="text-warning display-6 mb-2 d-block">🎙️</span>
+                        <div class="fw-bold text-dark">Start Interview</div>
+                    </a>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="card text-center p-4 h-100 shadow-sm border-0">
+                    <a href="{{ url_for('compiler') }}" class="text-decoration-none d-block">
+                        <span class="text-info display-6 mb-2 d-block">💻</span>
+                        <div class="fw-bold text-dark">Code Practice</div>
+                    </a>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="card text-center p-4 h-100 shadow-sm border-0">
+                    <a href="{{ url_for('roadmap') }}" class="text-decoration-none d-block">
+                        <span class="text-success display-6 mb-2 d-block">🗺️</span>
+                        <div class="fw-bold text-dark">Roadmap</div>
+                    </a>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="card text-center p-4 h-100 shadow-sm border-0">
+                    <a href="#" class="text-decoration-none d-block text-muted">
+                        <span class="text-danger display-6 mb-2 d-block">🏅</span>
+                        <div class="fw-bold text-dark">Achievements</div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if interviews %}
+<div class="card p-4 mt-5 shadow-lg border-info border-3">
+    <h3 class="fw-bold text-dark mb-3">Detailed Feedback on Latest Interview</h3>
+    {% set latest_interview = interviews[0] %}
+    <p class="small text-muted mb-2">Topic: {{ latest_interview.question }}</p>
+    <p class="small text-muted mb-4">Taken on: {{ latest_interview.timestamp.strftime('%b %d, %I:%M %p') }}</p>
+    
+    <div class="row">
+        <div class="col-md-4">
+            <h5 class="fw-bold text-dark">Score: {{ latest_interview.score }}%</h5>
+            <div class="progress mb-3" style="height: 10px;">
+                <div class="progress-bar bg-{{ 'success' if latest_interview.score >= 70 else ('warning' if latest_interview.score >= 50 else 'danger') }}" 
+                     role="progressbar" style="width: {{ latest_interview.score }}%;" aria-valuenow="{{ latest_interview.score }}" 
+                     aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col-md-6">
+            <h5 class="fw-bold text-secondary">Communication Feedback</h5>
+            <p>{{ latest_interview.communication_feedback }}</p>
+        </div>
+        <div class="col-md-6">
+            <h5 class="fw-bold text-secondary">Technical Feedback</h5>
+            <p>{{ latest_interview.technical_feedback }}</p>
+        </div>
+    </div>
+    
+    <h5 class="fw-bold text-danger mt-3">🎯 Recommended Action:</h5>
+    <a href="{{ latest_interview.remedial_resource.link }}" target="_blank" class="btn btn-primary mt-2" style="width: fit-content;">
+        View Resource: {{ latest_interview.remedial_resource.title }} 🔗
+    </a>
+</div>
 {% endif %}
 
-<h3 class="text-success mt-5 mb-3">Recent Coding Activity</h3>
-<div class="alert alert-secondary">No coding activity recorded yet. (Check back after Phase 4!)</div>
+{% endblock %}
 
+{% block scripts %}
+<script>
+    // FIX: Delay Chart initialization until the entire window is loaded.
+    // This prevents rendering conflicts that cause the rapid, infinite growth bug.
+    window.onload = function() {
+        
+        // Data for Performance Trend Chart
+        const performanceTrendCtx = document.getElementById('performanceTrendChart');
+        if (performanceTrendCtx) {
+            new Chart(performanceTrendCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May'],
+                    datasets: [
+                        {
+                            label: 'Overall Score',
+                            data: [65, 70, 75, 80, 88],
+                            borderColor: '#28a745', // Green
+                            backgroundColor: 'rgba(40, 167, 69, 0.2)',
+                            tension: 0.4,
+                            fill: false,
+                            pointBackgroundColor: '#28a745',
+                            pointBorderColor: '#fff',
+                            pointHoverBackgroundColor: '#28a745',
+                            pointHoverBorderColor: '#fff',
+                            pointRadius: 5,
+                            pointHoverRadius: 7
+                        },
+                        {
+                            label: 'Interview Score',
+                            data: [58, 62, 68, 73, 78],
+                            borderColor: '#17a2b8', // Cyan
+                            backgroundColor: 'rgba(23, 162, 184, 0.2)',
+                            tension: 0.4,
+                            fill: false,
+                            pointBackgroundColor: '#17a2b8',
+                            pointBorderColor: '#fff',
+                            pointHoverBackgroundColor: '#17a2b8',
+                            pointHoverBorderColor: '#fff',
+                            pointRadius: 5,
+                            pointHoverRadius: 7
+                        },
+                        {
+                            label: 'Coding Score',
+                            data: [70, 75, 80, 85, 92],
+                            borderColor: '#ffc107', // Yellow
+                            backgroundColor: 'rgba(255, 193, 7, 0.2)',
+                            tension: 0.4,
+                            fill: false,
+                            pointBackgroundColor: '#ffc107',
+                            pointBorderColor: '#fff',
+                            pointHoverBackgroundColor: '#ffc107',
+                            pointHoverBorderColor: '#fff',
+                            pointRadius: 5,
+                            pointHoverRadius: 7
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            grid: { color: '#e9ecef' },
+                            ticks: { color: '#6c757d' }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { color: '#6c757d' }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Data for Skill Distribution Chart (Radar)
+        const skillDistributionCtx = document.getElementById('skillDistributionChart');
+        if (skillDistributionCtx) {
+            new Chart(skillDistributionCtx, {
+                type: 'radar',
+                data: {
+                    labels: ['Communication', 'Technical', 'Problem Solving', 'Domain Knowledge', 'Leadership', 'Teamwork'],
+                    datasets: [
+                        {
+                            label: 'Current Level',
+                            data: [70, 85, 75, 60, 50, 65],
+                            backgroundColor: 'rgba(40, 167, 69, 0.3)', 
+                            borderColor: '#28a745', 
+                            pointBackgroundColor: '#28a745',
+                            pointBorderColor: '#fff',
+                            pointHoverBackgroundColor: '#fff',
+                            pointHoverBorderColor: '#28a745'
+                        },
+                        {
+                            label: 'Target Level',
+                            data: [80, 90, 85, 70, 60, 75],
+                            backgroundColor: 'rgba(167, 217, 180, 0.3)', 
+                            borderColor: '#a7d9b4', 
+                            pointBackgroundColor: '#a7d9b4',
+                            pointBorderColor: '#fff',
+                            pointHoverBackgroundColor: '#fff',
+                            pointHoverBorderColor: '#a7d9b4'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        r: {
+                            angleLines: { color: '#e9ecef' },
+                            grid: { color: '#e9ecef' },
+                            pointLabels: {
+                                color: '#343a40',
+                                font: { size: 12, weight: 'bold' }
+                            },
+                            ticks: {
+                                backdropColor: 'transparent',
+                                color: '#6c757d', 
+                                stepSize: 25,
+                                max: 100,
+                                min: 0
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    };
+</script>
 {% endblock %}

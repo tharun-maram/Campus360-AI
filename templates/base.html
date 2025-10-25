@@ -17,7 +17,8 @@
             --danger-color: #dc3545;
             --light-bg: #f8f9fa; 
             --dark-bg: #343a40;
-            --text-dark: #000000; /* Pure Black text */
+            --text-dark: #000000; /* Pure Black text for headers/strong links */
+            --text-muted-dark: #6c757d; /* Muted gray for general text/inactive links */
             --card-border: #e9ecef;
         }
         body {
@@ -46,12 +47,10 @@
         }
         .nav-link {
             font-weight: 500;
-            color: var(--text-dark) !important;
+            color: var(--text-muted-dark) !important; /* Inactive links are gray */
             margin: 0 0.8rem;
             padding: 0.5rem 0;
             position: relative;
-            /* Match the image: slightly lighter font */
-            color: #6c757d !important; 
         }
         .nav-link.active {
             color: var(--text-dark) !important; /* Active link text is black/dark */
@@ -61,9 +60,9 @@
             content: '';
             position: absolute;
             left: 0;
-            bottom: -10px; /* Adjusting for padding/visual space */
+            bottom: -10px;
             width: 100%;
-            height: 4px; /* Thicker indicator */
+            height: 4px; 
             background-color: var(--primary-color);
             border-radius: 2px;
         }
@@ -86,13 +85,46 @@
             border-color: var(--success-color) !important; 
             font-weight: 600;
         }
-        /* ... (rest of the styles are inherited correctly from previous steps) ... */
+        .btn-primary:hover {
+            background-color: #218838 !important; 
+            border-color: #218838 !important;
+        }
+        .btn-success { 
+            background-color: var(--success-color); 
+            border-color: var(--success-color);
+        }
+        .btn-success:hover {
+            background-color: #218838;
+            border-color: #218838;
+        }
+        
+        /* CARD OVERRIDES */
+        .card {
+            border-radius: 12px;
+            border: 1px solid var(--card-border);
+            box-shadow: none; 
+        }
+        
+        /* FOOTER */
+        footer {
+            background-color: var(--dark-bg);
+            color: #f8f9fa;
+            padding: 3rem 0;
+            margin-top: 5rem;
+        }
+        footer a {
+            color: #adb5bd;
+            text-decoration: none;
+        }
+        .logo-footer {
+            color: #ffffff;
+            margin-right: 0.5rem;
+        }
     </style>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg">
         <div class="container-fluid mx-5">
-            <!-- LOGO -->
             <a class="navbar-brand" href="{{ url_for('landing_page') }}">
                 <i class="bi bi-mortarboard-fill me-2"></i>
                 Campus 360
@@ -103,26 +135,29 @@
             </button>
             
             <div class="collapse navbar-collapse" id="navbarNav">
-                <!-- Outer Flex Container to Center Menu and Push User Right -->
                 <div class="d-flex w-100 justify-content-between align-items-center">
                     
-                    <!-- 1. LEFT SPACER (For visual alignment) -->
                     <ul class="navbar-nav" style="width: 100px;"></ul> 
 
-                    <!-- 2. CENTRAL NAVIGATION LINKS (The core menu) -->
                     <ul class="navbar-nav">
                         {% if session.get('role') == 'student' %}
                         <li class="nav-item">
                             <a class="nav-link {% if request.endpoint == 'student_dashboard' %}active{% endif %}" href="{{ url_for('student_dashboard') }}">Dashboard</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link {% if request.endpoint == 'start_interview' %}active{% endif %}" href="{{ url_for('start_interview', q_key='hr_q1') }}">AI Interview</a>
+                            <a class="nav-link {% if request.endpoint == 'start_interview' %}active{% endif %}" href="{{ url_for('start_interview') }}">AI Interview</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link {% if request.endpoint == 'compiler' %}active{% endif %}" href="{{ url_for('compiler') }}">Code Practice</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link {% if request.endpoint == 'student_dashboard' %}active{% endif %}" href="{{ url_for('student_dashboard') }}">Analytics</a>
+                            <a class="nav-link {% if request.endpoint == 'roadmap' %}active{% endif %}" href="{{ url_for('roadmap') }}">Road Map</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Connect Alumni</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Find Job</a>
                         </li>
                         {% elif session.get('role') == 'faculty' %}
                         <li class="nav-item">
@@ -134,7 +169,6 @@
                         {% endif %}
                     </ul>
 
-                    <!-- 3. RIGHT USER/LOGOUT GROUP -->
                     <ul class="navbar-nav">
                         {% if session.get('user_id') %}
                         <li class="nav-item d-flex align-items-center me-3">
@@ -189,9 +223,9 @@
                     <h5>FEATURES</h5>
                     <ul class="list-unstyled">
                         <li><a href="#" class="text-white-50">AI Mentor</a></li>
-                        <li><a href="{{ url_for('start_interview', q_key='hr_q1') }}" class="text-white-50">Smart Interviewer</a></li>
+                        <li><a href="{{ url_for('start_interview') }}" class="text-white-50">Smart Interviewer</a></li>
                         <li><a href="{{ url_for('compiler') }}" class="text-white-50">Code Practice</a></li>
-                        <li><a href="{{ url_for('student_dashboard') }}" class="text-white-50">Analytics</a></li>
+                        <li><a href="{{ url_for('roadmap') }}" class="text-white-50">Road Map</a></li>
                     </ul>
                 </div>
                 <div class="col-md-3">

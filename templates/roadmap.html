@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2 class="fw-bold text-dark mb-2">Career Roadmaps 🗺️</h2>
+<p class="lead text-muted mb-4">Explore structured learning paths based on your target role.</p>
+
+<div class="card p-4 mb-4 border-0 shadow-sm">
+    <form action="https://roadmap.sh" method="GET" target="_blank" class="d-flex align-items-center">
+        
+        <div class="input-group input-group-lg me-3" style="max-width: 400px;">
+            <label class="input-group-text bg-light fw-bold" for="role-select" style="color: var(--dark-bg);">Target Role</label>
+            <select name="search" id="role-select" class="form-select" required>
+                {% for role in roles %}
+                    {% set role_value = role | lower | replace(' ', '-') %}
+                    <option value="{{ role_value }}" 
+                        {% if role_value == selected_path %}selected{% endif %}>
+                        {{ role }}
+                    </option>
+                {% endfor %}
+            </select>
+            <input type="hidden" name="search" id="hidden-search-input">
+        </div>
+        
+        <button class="btn btn-primary btn-lg px-4" type="submit">View Roadmap</button>
+    </form>
+</div>
+
+<h3 class="fw-bold text-dark mb-3 mt-4">Learning Path Viewer</h3>
+<div class="alert alert-info">
+    <p class="fw-bold mb-1">Feature Integration Note:</p>
+    <p class="mb-0 small">The content is opened in a new tab because the external site, roadmap.sh, prevents embedding its content directly for security reasons (X-Frame-Options). This ensures the feature remains fully functional for you.</p>
+</div>
+{% endblock %}

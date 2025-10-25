@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center text-center">
+    <div class="col-md-8">
+        <div class="card p-5 shadow-lg">
+            <h2 class="fw-bold text-dark mb-4">Customize Your Interview 🧠</h2>
+            <p class="lead text-muted mb-4">Select your **target role** to receive hyper-personalized questions.</p>
+            
+            <form method="POST" action="{{ url_for('start_interview') }}">
+    <div class="row g-3 mb-4">
+        <div class="col-md-4">
+            <label for="level-select" class="form-label fw-bold text-muted small">Academic Level</label>
+            <select id="level-select" name="level" class="form-select form-select-lg bg-light" required>
+                <option value="" disabled selected>Select Level</option>
+                {% for level in levels %}
+                    <option value="{{ level }}">{{ level }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div class="col-md-4">
+            <label for="branch-select" class="form-label fw-bold text-muted small">Current Branch</label>
+            <select id="branch-select" name="branch" class="form-select form-select-lg bg-light" required>
+                <option value="" disabled selected>Select Branch</option>
+                {% for branch in branches %}
+                    <option value="{{ branch }}">{{ branch }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="col-md-4">
+            <label for="role-select" class="form-label fw-bold text-secondary">Target Job Role</label>
+            <select id="role-select" name="target_role" class="form-select form-select-lg bg-light" required>
+                <option value="" disabled selected>Select Target Role</option>
+                {% for role in roles %}
+                    <option value="{{ role }}">{{ role }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+    
+    <button type="submit" class="btn btn-primary fs-5 w-100 py-3 mt-4">Start Personalized Session</button>
+</form>
+        </div>
+    </div>
+</div>
+{% endblock %}
